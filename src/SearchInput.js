@@ -48,16 +48,14 @@ class SearchInput {
 
   handleKeyup = (e) => {
     e.preventDefault();
-    const keyCode = e.keyCode;
-    if (keyCode === 38) {
-      // UP KEY
+    const keyCode = e.key;
+    if (keyCode === "ArrowUp") {
       this.isAutoSearch = true;
       this.nowIndex -= 1;
       if (this.nowIndex < 0) {
         this.nowIndex = this.suggetionList.length - 1;
       }
-    } else if (keyCode === 40) {
-      // DOWN KEY
+    } else if (keyCode === "ArrowDown") {
       this.isAutoSearch = true;
       this.nowIndex += 1;
       if (this.nowIndex > this.suggetionList.length - 1) {
@@ -67,8 +65,8 @@ class SearchInput {
       this.nowIndex = -1;
     }
     if (this.isAutoSearch) {
-      if (keyCode === 13) {
-        // ENTER KEY
+      if (keyCode == "Enter") {
+        e.preventDefault();
         this.suggestion.handleSelected();
       }
       this.callbackSelected();
