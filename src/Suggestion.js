@@ -48,7 +48,8 @@ class Suggestion {
   };
 
   // Suggestion__item--selected
-  handleSelected = () => {
+  handleSelected = (event) => {
+    event.preventDefault();
     const selected = this.suggestions[this.nowIndex];
     alert(selected);
     this.settingSelectedList(selected);
@@ -56,9 +57,9 @@ class Suggestion {
     this.callbackHandle();
   };
 
-  handleMouseEnter = (e) => {
-    e.preventDefault();
-    const idx = e.target.dataset.idx;
+  handleMouseEnter = (event) => {
+    event.preventDefault();
+    const idx = event.target.dataset.idx;
     this.nowIndex = idx;
   };
 

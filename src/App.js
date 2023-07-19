@@ -21,6 +21,7 @@ class App {
       $target: $SearchInput,
       callbackResult: this.settingSuggestionList,
       callbackSelected: this.settingNowSelected,
+      callbackEnter: this.handleSelectedEnter,
     });
     this.$target.append($SelectedLanguage, $SearchInput);
   };
@@ -49,6 +50,11 @@ class App {
     const nowIndex = this.searchI.getNowIndex();
     this.suggestion.setNowIndex(nowIndex);
     this.suggestion.handleKeyPoint();
+  };
+
+  // SearchInput.js
+  handleSelectedEnter = () => {
+    this.suggestion.handleSelected();
   };
 
   // Suggestion.js

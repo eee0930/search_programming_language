@@ -2,20 +2,21 @@ import { createElement } from "./hooks/createElement.js";
 import { fetchSearchResult } from "./api.js";
 
 class SearchInput {
-  constructor({ $target, callbackResult, callbackSelected }) {
+  constructor({ $target, callbackResult, callbackSelected, callbackEnter }) {
     this.$target = $target;
     this.callbackResult = callbackResult;
     this.callbackSelected = callbackSelected;
+    this.callbackEnter = callbackEnter;
     this.$input;
-    this.suggestion;
     this.value;
     this.suggetionList = [];
     this.nowIndex = -1;
-    this.isAutoSearch = false;
+    this.isAutoSearch = false; // keyDown, up press 여부
     this.render();
   }
 
   render = () => {
+    this.$target.addEventListener("enter", this.handleEnter);
     this.settingSearchInput();
     this.$target.appendChild(this.$input);
     this.$input.focus();
@@ -34,10 +35,10 @@ class SearchInput {
     this.callbackResult();
   };
 
-  handleInputQuery = (e) => {
-    e.preventDefault();
+  handleInputQuery = (event) => {
+    event.preventDefault();
     this.isAutoSearch = false;
-    const { value } = e.target;
+    const { value } = event.target;
     let searchTimer;
     searchTimer = setTimeout(() => {
       this.getSearchResult(value);
@@ -46,16 +47,16 @@ class SearchInput {
     }, 1000);
   };
 
-  handleKeyup = (e) => {
-    e.preventDefault();
-    const keyCode = e.key;
-    if (keyCode === "ArrowUp") {
+  handleKeyup = (event) => {
+    event.preventDefault();
+    const { key } = event;
+    if (key === "ArrowUp") {
       this.isAutoSearch = true;
       this.nowIndex -= 1;
       if (this.nowIndex < 0) {
         this.nowIndex = this.suggetionList.length - 1;
       }
-    } else if (keyCode === "ArrowDown") {
+    } else if (key === "ArrowDown") {
       this.isAutoSearch = true;
       this.nowIndex += 1;
       if (this.nowIndex > this.suggetionList.length - 1) {
@@ -65,14 +66,20 @@ class SearchInput {
       this.nowIndex = -1;
     }
     if (this.isAutoSearch) {
-      if (keyCode == "Enter") {
-        e.preventDefault();
-        this.suggestion.handleSelected();
-      }
+      // if (key === "Enter") {
+      //   event.preventDefault();
+      //   this.callbackEnter();
+      // }
       this.callbackSelected();
     }
   };
 
+  handleEnter = (event) => {
+    event.preventDefault();
+    if (this.isAutoSearch) {
+      this.callbackEnter();
+    }
+  };
   getNowIndex = () => {
     return this.nowIndex;
   };
