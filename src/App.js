@@ -10,6 +10,7 @@ class App {
     this.selL;
     this.searchI;
     this.suggestion;
+    this.selectedList = [];
     this.render();
   }
 
@@ -28,21 +29,22 @@ class App {
 
   // SearchInput.js
   settingSuggestionList = () => {
+    const searchValue = this.searchI.getSearchValue();
     if (document.querySelector(".Suggestion")) {
       document.querySelector(".Suggestion").remove();
     }
-    const $Suggestion = createElement("div", "Suggestion");
-    const value = this.searchI.getSearchValue();
-    const sugestionList = this.searchI.getSuggestionList();
-    removeChildNode($Suggestion);
-    this.suggestion = new Suggestion({
-      $target: $Suggestion,
-      searchValue: value,
-      suggestions: sugestionList,
-      callback: this.settingSelectedList,
-      callbackHandle: this.renderSuggestionList,
-    });
-    this.$target.append($Suggestion);
+    if (searchValue.length > 0) {
+      const $Suggestion = createElement("div", "Suggestion");
+      const sugestionList = this.searchI.getSuggestionList();
+      removeChildNode($Suggestion);
+      this.suggestion = new Suggestion({
+        $target: $Suggestion,
+        searchValue: searchValue,
+        suggestions: sugestionList,
+        callback: this.settingSelectedList,
+      });
+      this.$target.append($Suggestion);
+    }
   };
 
   // SearchInput.js
@@ -59,12 +61,17 @@ class App {
 
   // Suggestion.js
   settingSelectedList = () => {
-    const selectedList = this.suggestion.getSelectedList();
-    this.selL.setSelectedList(selectedList);
-  };
-
-  // Suggestion.js
-  renderSuggestionList = () => {
+    const value = this.suggestion.getNowValue();
+    if (this.selectedList.includes(value)) {
+      const idx = this.selectedList.indexOf(value);
+      this.selectedList.splice(idx, 1);
+    } else {
+      if (this.selectedList.length === 5) {
+        this.selectedList.shift();
+      }
+    }
+    this.selectedList.push(value);
+    this.selL.setSelectedList(this.selectedList);
     this.selL.render();
   };
 }

@@ -16,7 +16,7 @@ class SearchInput {
   }
 
   render = () => {
-    this.$target.addEventListener("enter", this.handleEnter);
+    this.$target.addEventListener("submit", this.handleEnter);
     this.settingSearchInput();
     this.$target.appendChild(this.$input);
     this.$input.focus();
@@ -31,7 +31,10 @@ class SearchInput {
   };
 
   getSearchResult = async (query) => {
-    this.suggetionList = await fetchSearchResult(query);
+    if (query.length > 0) {
+      this.suggetionList = await fetchSearchResult(query);
+    }
+    this.value = query;
     this.callbackResult();
   };
 
@@ -42,7 +45,6 @@ class SearchInput {
     let searchTimer;
     searchTimer = setTimeout(() => {
       this.getSearchResult(value);
-      this.value = value;
       clearTimeout(searchTimer);
     }, 1000);
   };
@@ -66,10 +68,6 @@ class SearchInput {
       this.nowIndex = -1;
     }
     if (this.isAutoSearch) {
-      // if (key === "Enter") {
-      //   event.preventDefault();
-      //   this.callbackEnter();
-      // }
       this.callbackSelected();
     }
   };
@@ -78,8 +76,10 @@ class SearchInput {
     event.preventDefault();
     if (this.isAutoSearch) {
       this.callbackEnter();
+      this.isAutoSearch = false;
     }
   };
+
   getNowIndex = () => {
     return this.nowIndex;
   };
